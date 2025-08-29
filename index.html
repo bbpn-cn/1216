@@ -3,208 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的个人主页</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>chenの倒计时</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-weight: 500;
+            background: #1a1a2e;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            z-index: -2;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.02) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 0 auto 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            overflow: hidden;
+        }
+
+        .profile-pic::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: inherit;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .profile-pic span {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .countdown-main {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .big-number {
+            font-size: 4rem;
+            font-weight: 400;
+            line-height: 1;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .big-label {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .time-units {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .time-unit {
+            flex: 1;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .time-number {
+            font-size: 1.8rem;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .time-label {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 15px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .stat-number {
+            font-size: 1.6rem;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        .progress-section {
+            margin: 25px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-details {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        .age-display {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+            line-height: 1.4;
+            padding: 20px 0;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        .wide-card {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .big-number {
+                font-size: 3rem;
+            }
+            
+            .time-units {
+                flex-wrap: wrap;
+            }
+            
+            .time-unit {
+                flex: 0 0 calc(50% - 7.5px);
+                margin-bottom: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        /* 添加一些细节动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-content">
-            <div class="logo">
-                <a href="#">Portfolio</a>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="profile-pic">
+                <span>chen</span>
             </div>
-            <ul class="nav-links">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于</a></li>
-                <li><a href="#skills">技能</a></li>
-                <li><a href="#projects">项目</a></li>
-                <li><a href="#contact">联系</a></li>
-            </ul>
-            <div class="menu-btn">
-                <i class="fas fa-bars"></i>
-            </div>
+            <h1>chen wen tao</h1>
+            <div class="subtitle" id="currentTime"></div>
         </div>
-    </nav>
 
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1 class="animate-text">你好，我是<span class="highlight">chen wen tao</span></h1>
-            <p class="animate-text">全栈开发工程师 / UI设计师 / 创意工作者</p>
-            <div class="cta-buttons">
-                <a href="#projects" class="btn primary">查看作品</a>
-                <a href="#contact" class="btn secondary">联系我</a>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <div class="mouse"></div>
-        </div>
-    </section>
-
-    <section id="about" class="about">
-        <div class="container">
-            <h2 class="section-title">关于我</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>我是一名充满激情的开发者，专注于创建美观且用户友好的web应用。我热爱将创意转化为代码，并持续学习新技术。</p>
-                    <p>在过去的几年里，我参与开发了多个大型项目，积累了丰富的实战经验。我相信技术能够改变世界，而我正在为此努力。</p>
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">距离生日还有</div>
+                <div class="countdown-main">
+                    <div class="big-number" id="birthdayDays">365</div>
+                    <div class="big-label">天</div>
                 </div>
-                <div class="about-stats">
-                    <div class="stat-item">
-                        <span class="number">5+</span>
-                        <span class="label">年工作经验</span>
+                <div class="time-units">
+                    <div class="time-unit">
+                        <span class="time-number" id="bdDays">0</span>
+                        <div class="time-label">天</div>
                     </div>
+                    <div class="time-unit">
+                        <span class="time-number" id="bdHours">0</span>
+                        <div class="time-label">时</div>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-number" id="bdMinutes">0</span>
+                        <div class="time-label">分</div>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-number" id="bdSeconds">0</span>
+                        <div class="time-label">秒</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">活了多久</div>
+                <div class="stats-grid">
                     <div class="stat-item">
-                        <span class="number">50+</span>
-                        <span class="label">完成项目</span>
+                        <span class="stat-number" id="totalDays">0</span>
+                        <div class="stat-label">天</div>
                     </div>
                     <div class="stat-item">
-                        <span class="number">30+</span>
-                        <span class="label">客户好评</span>
+                        <span class="stat-number" id="totalHours">0</span>
+                        <div class="stat-label">小时</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="currentAge">0</span>
+                        <div class="stat-label">岁</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="birthdaysPassed">0</span>
+                        <div class="stat-label">个生日</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section id="skills" class="skills">
-        <div class="container">
-            <h2 class="section-title">专业技能</h2>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <i class="fas fa-code"></i>
-                    <h3>前端开发</h3>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-progress="90"></div>
+            <div class="card">
+                <div class="card-title">人生进度</div>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>预期80岁</span>
+                        <span id="lifePercentage">0%</span>
                     </div>
-                </div>
-                <div class="skill-card">
-                    <i class="fas fa-server"></i>
-                    <h3>后端开发</h3>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-progress="85"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="lifeProgressFill"></div>
                     </div>
-                </div>
-                <div class="skill-card">
-                    <i class="fas fa-paint-brush"></i>
-                    <h3>UI设计</h3>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-progress="80"></div>
-                    </div>
-                </div>
-                <div class="skill-card">
-                    <i class="fas fa-mobile-alt"></i>
-                    <h3>响应式设计</h3>
-                    <div class="skill-bar">
-                        <div class="skill-progress" data-progress="95"></div>
+                    <div class="progress-details">
+                        剩余大约 <span id="remainingYears">0</span> 年<br>
+                        还有 <span id="remainingDays">0</span> 天
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section id="projects" class="projects">
-        <div class="container">
-            <h2 class="section-title">我的项目</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1607082349566-187342175e2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZWNvbW1lcmNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60" alt="电商平台项目展示">
-                    </div>
-                    <div class="project-info">
-                        <h3>电商平台</h3>
-                        <p>基于React的现代电商解决方案，包含完整的购物流程、支付系统和后台管理功能。</p>
-                        <div class="project-tags">
-                            <span class="tag">React</span>
-                            <span class="tag">Node.js</span>
-                            <span class="tag">MongoDB</span>
-                        </div>
-                        <a href="#" class="btn">了解更多</a>
-                    </div>
+            <div class="card">
+                <div class="card-title">精确年龄</div>
+                <div class="age-display" id="exactAge">
+                    15岁 0个月 13天
                 </div>
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8c29jaWFsJTIwbWVkaWF8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60" alt="社交媒体项目展示">
-                    </div>
-                    <div class="project-info">
-                        <h3>社交媒体</h3>
-                        <p>Vue.js打造的现代社交平台，支持实时聊天、动态分享和用户互动功能。</p>
-                        <div class="project-tags">
-                            <span class="tag">Vue.js</span>
-                            <span class="tag">Firebase</span>
-                            <span class="tag">WebSocket</span>
-                        </div>
-                        <a href="#" class="btn">了解更多</a>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b25saW5lJTIwbGVhcm5pbmd8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60" alt="在线教育项目展示">
-                    </div>
-                    <div class="project-info">
-                        <h3>在线教育</h3>
-                        <p>完整的在线学习解决方案，包含视频课程、在线测试和学习进度追踪系统。</p>
-                        <div class="project-tags">
-                            <span class="tag">Angular</span>
-                            <span class="tag">Spring Boot</span>
-                            <span class="tag">MySQL</span>
-                        </div>
-                        <a href="#" class="btn">了解更多</a>
-                    </div>
+                <div class="time-info">
+                    <span>今年第 <span id="dayOfYear">1</span> 天</span>
+                    <span>本月第 <span id="dayOfMonth">1</span> 天</span>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2 class="section-title">联系我</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <p>2388489710@qq.com</p>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <p>+86 123 4567 8900</p>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <p>北京市朝阳区</p>
-                    </div>
-                </div>
-                <form class="contact-form">
-                    <div class="form-group">
-                        <input type="text" placeholder="您的姓名" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" placeholder="您的邮箱" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea placeholder="您的留言" required></textarea>
-                    </div>
-                    <button type="submit" class="btn primary">发送消息</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="social-links">
-                <a href="#"><i class="fab fa-github"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-            <p>&copy; 2025 我的个人主页. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <div id="back-to-top" title="返回顶部">
-        <i class="fas fa-arrow-up"></i>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 个人信息
+        const BIRTHDAY = new Date('2009-12-16');
+        const NAME = '陈文涛';
+        const LIFE_EXPECTANCY = 80;
+
+        function updateTime() {
+            const now = new Date();
+            
+            // 更新当前时间
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleDateString('zh-CN', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    weekday: 'long'
+                }) + ' ' + now.toLocaleTimeString('zh-CN');
+
+            // 计算下次生日
+            const nextBirthday = new Date(now.getFullYear(), BIRTHDAY.getMonth(), BIRTHDAY.getDate());
+            if (nextBirthday < now) {
+                nextBirthday.setFullYear(now.getFullYear() + 1);
+            }
+
+            // 生日倒计时
+            const timeToBirthday = nextBirthday - now;
+            const days = Math.floor(timeToBirthday / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeToBirthday % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeToBirthday % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeToBirthday % (1000 * 60)) / 1000);
+
+            document.getElementById('birthdayDays').textContent = days;
+            document.getElementById('bdDays').textContent = days;
+            document.getElementById('bdHours').textContent = hours;
+            document.getElementById('bdMinutes').textContent = minutes;
+            document.getElementById('bdSeconds').textContent = seconds;
+
+            // 已活时间
+            const lifeTime = now - BIRTHDAY;
+            const totalDays = Math.floor(lifeTime / (1000 * 60 * 60 * 24));
+            const totalHours = Math.floor(lifeTime / (1000 * 60 * 60));
+            const ageInYears = lifeTime / (1000 * 60 * 60 * 24 * 365.25);
+            const currentAge = Math.floor(ageInYears);
+
+            document.getElementById('totalDays').textContent = totalDays.toLocaleString();
+            document.getElementById('totalHours').textContent = totalHours.toLocaleString();
+            document.getElementById('currentAge').textContent = currentAge;
+            document.getElementById('birthdaysPassed').textContent = currentAge;
+
+            // 精确年龄
+            const years = Math.floor(ageInYears);
+            const months = Math.floor((ageInYears % 1) * 12);
+            const remainingDays = Math.floor(((ageInYears % 1) * 365.25) % 30.44);
+            document.getElementById('exactAge').textContent = `${years}岁 ${months}个月 ${remainingDays}天`;
+
+            // 人生进度
+            const lifeProgress = (ageInYears / LIFE_EXPECTANCY * 100);
+            document.getElementById('lifePercentage').textContent = lifeProgress.toFixed(1) + '%';
+            document.getElementById('lifeProgressFill').style.width = Math.min(lifeProgress, 100) + '%';
+            
+            const remainingYears = Math.max(0, LIFE_EXPECTANCY - ageInYears);
+            const remainingDaysLife = Math.floor(remainingYears * 365.25);
+            document.getElementById('remainingYears').textContent = remainingYears.toFixed(1);
+            document.getElementById('remainingDays').textContent = remainingDaysLife.toLocaleString();
+
+            // 时间信息
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+            document.getElementById('dayOfYear').textContent = dayOfYear;
+            document.getElementById('dayOfMonth').textContent = now.getDate();
+        }
+
+        // 初始化
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
 </body>
 </html>
